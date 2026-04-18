@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.canteen.mapper.DishesMapper">
+
+    <resultMap type="Dishes" id="DishesResult">
+        <result property="dishesId"    column="dishes_id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="price"    column="price"    />
+        <result property="image"    column="image"    />
+        <result property="categoryId"    column="category_id"    />
+        <result property="categoryName"    column="categoryName"    />
+    </resultMap>
+
+    <select id="selectDishesList" parameterType="Dishes" resultMap="DishesResult">
+        select d.dishes_id, d.name, d.description, d.price, d.image, d.category_id,
+               c.name as categoryName
+        from dishes d
+        left join category c on d.category_id = c.category_id
+        <where>
+            <if test="name != null  and name != ''"> and d.name like concat('%', #{name}, '%')</if>
+            <if test="categoryId != null  and categoryId != ''"> and d.category_id = #{categoryId}</if>
+        </where>
+    </select>
+
+    <select id="selectDishesByDishesId" parameterType="String" resultMap="DishesResult">
+select dishes_id, name, description, price, image, category_id from dishes
+        where dishes_id = #{dishesId}
+    </select>
+
+    <!--查询所有菜品-->
+    <select id="selectAllDishes" resultType="com.fast.canteen.domain.vo.DishesVO">
+        select dishes_id as dishesId, name
+        from dishes
+    </select>
+
+    <insert id="insertDishes" parameterType="Dishes">
+        insert into dishes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dishesId != null">dishes_id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="price != null">price,</if>
+            <if test="image != null and image != ''">image,</if>
+            <if test="categoryId != null and categoryId != ''">category_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dishesId != null">#{dishesId},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="price != null">#{price},</if>
+            <if test="image != null and image != ''">#{image},</if>
+            <if test="categoryId != null and categoryId != ''">#{categoryId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDishes" parameterType="Dishes">
+        update dishes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="categoryId != null and categoryId != ''">category_id = #{categoryId},</if>
+        </trim>
+        where dishes_id = #{dishesId}
+    </update>
+
+    <delete id="deleteDishesByDishesId" parameterType="String">
+        delete from dishes where dishes_id = #{dishesId}
+    </delete>
+
+    <delete id="deleteDishesByDishesIds" parameterType="String">
+        delete from dishes where dishes_id in
+        <foreach item="dishesId" collection="array" open="(" separator="," close=")">
+            #{dishesId}
+        </foreach>
+    </delete>
+</mapper>

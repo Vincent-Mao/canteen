@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.canteen.mapper.RecommendMapper">
+
+    <resultMap type="Recommend" id="RecommendResult">
+        <result property="recommendId"    column="recommend_id"    />
+        <result property="title"    column="title"    />
+        <result property="description"    column="description"    />
+        <result property="image"    column="image"    />
+        <result property="calories"    column="calories"    />
+    </resultMap>
+
+    <select id="selectRecommendList" parameterType="Recommend" resultMap="RecommendResult">
+        select recommend_id, title, description, image, calories from recommend
+        <where>
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectRecommendByRecommendId" parameterType="String" resultMap="RecommendResult">
+select recommend_id, title, description, image, calories from recommend
+        where recommend_id = #{recommendId}
+    </select>
+
+    <insert id="insertRecommend" parameterType="Recommend">
+        insert into recommend
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recommendId != null">recommend_id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="image != null and image != ''">image,</if>
+            <if test="calories != null">calories,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recommendId != null">#{recommendId},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="image != null and image != ''">#{image},</if>
+            <if test="calories != null">#{calories},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRecommend" parameterType="Recommend">
+        update recommend
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="calories != null">calories = #{calories},</if>
+        </trim>
+        where recommend_id = #{recommendId}
+    </update>
+
+    <delete id="deleteRecommendByRecommendId" parameterType="String">
+        delete from recommend where recommend_id = #{recommendId}
+    </delete>
+
+    <delete id="deleteRecommendByRecommendIds" parameterType="String">
+        delete from recommend where recommend_id in
+        <foreach item="recommendId" collection="array" open="(" separator="," close=")">
+            #{recommendId}
+        </foreach>
+    </delete>
+</mapper>

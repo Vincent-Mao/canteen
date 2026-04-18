@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.canteen.mapper.CollectMapper">
+
+    <resultMap type="Collect" id="CollectResult">
+        <result property="collectId"    column="collect_id"    />
+        <result property="dishesId"    column="dishes_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="dishesName"    column="dishesName"    />
+        <result property="image"    column="image"    />
+        <result property="description"    column="description"    />
+        <result property="price"    column="price"    />
+        <result property="userName"    column="user_name"    />
+    </resultMap>
+
+    <select id="selectCollectList" parameterType="Collect" resultMap="CollectResult">
+        select c.collect_id, c.dishes_id, c.user_id, c.create_time,
+               d.name as dishesName, d.image, d.description, d.price,
+               u.user_name
+        from collect c
+        left join dishes d on c.dishes_id = d.dishes_id
+        left join sys_user u on c.user_id = u.user_id
+        <where>
+            <if test="dishesId != null  and dishesId != ''">
+                and c.dishes_id like concat('%', #{dishesId}, '%')
+            </if>
+            <if test="userId != null ">
+                and c.user_id like concat('%', #{userId}, '%')
+            </if>
+            <if test="dishesName != null ">
+                and d.name like concat('%', #{dishesName}, '%')
+            </if>
+            <if test="userName != null ">
+                and u.user_name like concat('%', #{userName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCollectByCollectId" parameterType="String" resultMap="CollectResult">
+select collect_id, dishes_id, user_id, create_time from collect
+        where collect_id = #{collectId}
+    </select>
+
+    <!--根据菜品ID和用户ID查询收藏ID-->
+    <select id="selectCollectIdByDishesIdAndUserId" resultType="java.lang.String">
+        select collect_id
+        from collect
+        where dishes_id = #{dishesId} and user_id = #{userId}
+    </select>
+
+    <insert id="insertCollect" parameterType="Collect">
+        insert into collect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="collectId != null">collect_id,</if>
+            <if test="dishesId != null and dishesId != ''">dishes_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="collectId != null">#{collectId},</if>
+            <if test="dishesId != null and dishesId != ''">#{dishesId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCollect" parameterType="Collect">
+        update collect
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dishesId != null and dishesId != ''">dishes_id = #{dishesId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where collect_id = #{collectId}
+    </update>
+
+    <delete id="deleteCollectByCollectId" parameterType="String">
+        delete from collect where collect_id = #{collectId}
+    </delete>
+
+    <delete id="deleteCollectByCollectIds" parameterType="String">
+        delete from collect where collect_id in
+        <foreach item="collectId" collection="array" open="(" separator="," close=")">
+            #{collectId}
+        </foreach>
+    </delete>
+</mapper>

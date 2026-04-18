@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fast.canteen.mapper.FeedbackMapper">
+
+    <resultMap type="Feedback" id="FeedbackResult">
+        <result property="feedbackId"    column="feedback_id"    />
+        <result property="type"    column="type"    />
+        <result property="contact"    column="contact"    />
+        <result property="content"    column="content"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="userName"    column="user_name"    />
+    </resultMap>
+
+    <select id="selectFeedbackList" parameterType="Feedback" resultMap="FeedbackResult">
+        select f.feedback_id, f.type, f.contact, f.content, f.user_id, f.create_time,
+               u.user_name
+        from feedback f
+        left join sys_user u on f.user_id = u.user_id
+        <where>
+            <if test="type != null  and type != ''"> and f.type = #{type}</if>
+            <if test="userId != null "> and f.user_id = #{userId}</if>
+            <if test="userName != null  and userName != ''">
+                and u.user_name like concat('%', #{userName}, '%')
+            </if>
+        </where>
+        order by f.create_time desc
+    </select>
+
+    <select id="selectFeedbackByFeedbackId" parameterType="String" resultMap="FeedbackResult">
+select feedback_id, type, contact, content, user_id, create_time from feedback
+        where feedback_id = #{feedbackId}
+    </select>
+
+    <insert id="insertFeedback" parameterType="Feedback">
+        insert into feedback
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="feedbackId != null">feedback_id,</if>
+            <if test="type != null and type != ''">type,</if>
+            <if test="contact != null">contact,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="feedbackId != null">#{feedbackId},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="contact != null">#{contact},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFeedback" parameterType="Feedback">
+        update feedback
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="contact != null">contact = #{contact},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where feedback_id = #{feedbackId}
+    </update>
+
+    <delete id="deleteFeedbackByFeedbackId" parameterType="String">
+        delete from feedback where feedback_id = #{feedbackId}
+    </delete>
+
+    <delete id="deleteFeedbackByFeedbackIds" parameterType="String">
+        delete from feedback where feedback_id in
+        <foreach item="feedbackId" collection="array" open="(" separator="," close=")">
+            #{feedbackId}
+        </foreach>
+    </delete>
+</mapper>
