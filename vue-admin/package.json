@@ -1,8 +1,8 @@
 {
   "name": "huacai",
   "version": "1.0.0",
-  "description": "食堂点餐系统管理端",
-  "author": "花菜",
+  "description": "郑州大学食堂点餐系统管理端",
+  "author": "Vincent",
   "license": "MIT",
   "type": "module",
   "scripts": {
