@@ -1,0 +1,30 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #app {
+    height: 100%;
+    font-family: "Microsoft YaHei", sans-serif;
+}
+
+/* 去除元素默认样式 */
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+ul, li {
+    list-style: none;
+}
+
+/* Element Plus表格/表单间距优化 */
+.el-table {
+    margin-top: 10px;
+}
+
+.el-form-item {
+    margin-bottom: 20px;
+}
