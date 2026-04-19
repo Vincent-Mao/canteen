@@ -1,15 +1,34 @@
-import Cookies from 'js-cookie'
+// token相关key
+const TOKEN_KEY = 'dining_hall_token'
+const USER_INFO_KEY = 'dining_hall_user_info'
 
-const TokenKey = 'dining_token'
-
-export function getToken() {
-    return Cookies.get(TokenKey)
+// 存储token
+export const setToken = (token) => {
+    localStorage.setItem(TOKEN_KEY, token)
 }
 
-export function setToken(token) {
-    return Cookies.set(TokenKey, token)
+// 获取token
+export const getToken = () => {
+    return localStorage.getItem(TOKEN_KEY)
 }
 
-export function removeToken() {
-    return Cookies.remove(TokenKey)
+// 删除token
+export const removeToken = () => {
+    localStorage.removeItem(TOKEN_KEY)
+}
+
+// 存储用户信息
+export const setUserInfo = (info) => {
+    localStorage.setItem(USER_INFO_KEY, JSON.stringify(info))
+}
+
+// 获取用户信息
+export const getUserInfo = () => {
+    const info = localStorage.getItem(USER_INFO_KEY)
+    return info ? JSON.parse(info) : {}
+}
+
+// 删除用户信息
+export const removeUserInfo = () => {
+    localStorage.removeItem(USER_INFO_KEY)
 }
