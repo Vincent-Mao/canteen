@@ -1,14 +1,18 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs' // 中文语言包
+import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
-import './assets/css/global.css' // 全局样式
+// 取消注释，恢复路由和状态管理
+import router from '@/router/index.js'
+import store from '@/store/index.js'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
-const app = createApp(App)
-app.use(createPinia())
-app.use(ElementPlus, { locale: zhCn }) // 配置Element Plus中文
-app.use(router)
-app.mount('#app')
+Vue.use(ElementUI)
+Vue.config.productionTip = false
+
+// 恢复完整的 Vue 实例
+new Vue({
+    el: '#app',
+    router, // 恢复路由
+    store,  // 恢复状态管理
+    render: h => h(App)
+})
