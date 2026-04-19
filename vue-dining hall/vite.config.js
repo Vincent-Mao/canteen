@@ -1,10 +1,7 @@
 import { defineConfig, loadEnv } from 'vite'
+import vue from '@vitejs/plugin-vue2'
 import path from 'path'
-// 如果 vue-user 有 plugins 目录，直接复制过来（没有则注释这行）
-// import createVitePlugins from './vite/plugins'
-import vue from '@vitejs/plugin-vue2' // Vue2 需用这个插件（Vue3 用 @vitejs/plugin-vue）
 
-// 后端接口地址（和 vue-user 保持一致）
 const baseUrl = 'http://localhost:8080'
 
 export default defineConfig(({ mode, command }) => {
@@ -12,16 +9,12 @@ export default defineConfig(({ mode, command }) => {
     const { VITE_APP_ENV } = env
 
     return {
-        // 部署路径（和 vue-user 一致）
         base: VITE_APP_ENV === 'production' ? '/' : '/',
 
-        // 插件（对齐 vue-user，没有plugins就只保留vue2插件）
         plugins: [
-            vue(),
-            // createVitePlugins(env, command === 'build') // 有plugins目录则解开注释
+            vue()
         ],
 
-        // 路径别名（和 vue-user 完全一致）
         resolve: {
             alias: {
                 '~': path.resolve(__dirname, './'),
@@ -30,7 +23,6 @@ export default defineConfig(({ mode, command }) => {
             extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
         },
 
-        // 打包配置（复刻 vue-user）
         build: {
             sourcemap: command === 'build' ? false : 'inline',
             outDir: 'dist',
@@ -45,19 +37,16 @@ export default defineConfig(({ mode, command }) => {
             }
         },
 
-        // 开发服务器（对齐 vue-user，仅改端口避免冲突）
         server: {
-            port: 3002, // 商家端端口（和用户端区分，比如用户端用80，商家端用3002）
-            host: '127.0.0.1',
-            open: true, // 启动自动打开浏览器
+            port: 3002,
+            host: '0.0.0.0',
+            open: true,
             proxy: {
-                // 复刻 vue-user 的代理规则
                 '/dev-api': {
                     target: baseUrl,
                     changeOrigin: true,
                     rewrite: (p) => p.replace(/^\/dev-api/, '')
                 },
-                // springdoc 接口文档代理（和 vue-user 一致）
                 '^/v3/api-docs/(.*)': {
                     target: baseUrl,
                     changeOrigin: true,
@@ -65,8 +54,15 @@ export default defineConfig(({ mode, command }) => {
             }
         },
 
-        // CSS 配置（完全复刻 vue-user）
         css: {
+            // ✅【只加了这段】消除 Sass 旧 API 警告，不影响任何功能
+            preprocessorOptions: {
+                scss: {
+                    api: 'modern-compiler',
+                    silenceDeprecations: ['legacy-js-api']
+                }
+            },
+            // 你原来的 postcss 保持不动
             postcss: {
                 plugins: [
                     {

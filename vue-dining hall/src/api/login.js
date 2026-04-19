@@ -1,6 +1,6 @@
-import request from './request' // 复用axios实例
+import request from './request'
 
-// 商家登录接口
+// 商家登录
 export const login = (data) => {
     return request({
         url: '/dining-hall/login',
@@ -9,11 +9,19 @@ export const login = (data) => {
     })
 }
 
-// 商家注册接口
+// 商家注册
 export const register = (data) => {
     return request({
         url: '/dining-hall/register',
         method: 'post',
         data
+    })
+}
+
+// 验证码接口
+export function getCodeImg() {
+    return request({
+        url: '/captchaImage',
+        method: 'get'
     })
 }
