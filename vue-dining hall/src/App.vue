@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <!-- 恢复路由视图，路由会自动渲染登录页 -->
+    <!-- 根路由视图：登录/注册页直接显示，Home页显示MainLayout -->
     <router-view />
   </div>
 </template>
@@ -17,15 +17,7 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
-
-html,
-body {
-  width: 100%;
-  height: 100%;
-  background-color: #f5f7fa;
-}
-
-#app {
+html, body, #app {
   width: 100%;
   height: 100%;
   font-family: "Helvetica Neue", Helvetica, "Microsoft YaHei", sans-serif;
